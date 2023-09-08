@@ -2,6 +2,9 @@ const express= require("express");
 const app= express();
 require('dotenv').config();
 const mongoose = require("mongoose");
+const customerAPI = require("./routes/customerRoutes/customerRoutes");
+const SuperAdminAPI = require("./routes/SuperAdminRoutes/SuperAdminRoutes");
+const AdminAPI = require("./routes/AdminRoutes/AdminRoutes");
 
 
 
@@ -12,13 +15,33 @@ app.use(cors({
 }));
 app.set('view engine', 'ejs'); 
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+// app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
 app.set('trust proxy', 1);
-
-
 app.use(cors())
 mongoose.set('strictQuery', true)
+
+//API ONLY
+
+app.use('/customer',customerAPI);
+app.use('/superAdmin',SuperAdminAPI);
+app.use('/admin',AdminAPI);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 require('./Connectors/dbConnector')
 

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const AdminModel = new mongoose.Schema({
-    AdminName :{
+    name :{
         type: String,
         required: true
     },
@@ -21,7 +21,14 @@ const AdminModel = new mongoose.Schema({
         required:[true,"Password is compulsary"],
         match:[/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,"Please provide a valid password"]
     },
-    photo: String
+    photo: String,
+    role:{
+        type: String
+    },
+    isDeleted:{
+        type: Boolean,
+        default: false
+    }
 },{timestamps: true})
 
 module.exports= mongoose.model("Admin-model",AdminModel);
