@@ -10,14 +10,13 @@ const AdminAPI = require("./routes/AdminRoutes/AdminRoutes");
 
 const cors = require("cors");
 const bodyParser = require('body-parser')
-app.use(cors({
-    origin: 'http://localhost:3000'
-}));
+// app.use(cors({
+//     origin: 'http://localhost:3000'
+// }));
 app.set('view engine', 'ejs'); 
 app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 app.set('trust proxy', 1);
 app.use(cors())
 mongoose.set('strictQuery', true)

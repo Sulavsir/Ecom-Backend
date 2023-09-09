@@ -10,18 +10,14 @@ const jwt = require('jsonwebtoken');
 
 
 const customerRegister = async(req,res)=>{
-  if(req.file){
-   const uploadedImage= req.file.filename
-  }
+  const Clients = _.pick(req.body,[
+    'email',
+    'password',
+    'name',
+    'photo',
+  ]);
   console.log('req.file',req.file)
-    const Clients = _.pick(req.body,[
-        'email',
-        'password',
-        'name',
-        'photo',
-    ]);
-   
-    const filterData = {
+  const filterData = {
     email:req.body.email,
     isDeleted:false
     }
@@ -32,7 +28,6 @@ const customerRegister = async(req,res)=>{
     try { 
       
       const existingAdmin = await AdminModel.findOne(filterData)
-      console.log(existingAdmin);
       if(existingAdmin){
           return res.status(400).json({message:'Account already created using this Email !!'});
       }
@@ -58,13 +53,11 @@ const customerRegister = async(req,res)=>{
          verificationToken,
          verified: false,
          password: hashPassword,
-         photo:  req.file.filename
        });
 
-      //  if(req.file){
-      //   modelDoc.photo=req.file.filename
-
-      //  }
+       if(req.file){
+        modelDoc.photo=req.file.filename
+       }
        const savedData = await modelDoc.save();
    
        if (savedData && savedData._id) {
@@ -201,40 +194,112 @@ const customerLogin = async (req, res) => {
 
     const UpdateCustomerProfilepic = async(req,res) =>{
       const userId = req.body.id
+  
+      const image = req.file.filename;
+  //    console.log('sjshds',itemBody)
+      if(!image){
+        res.status(400).json({message:"please provide your image"})
+        }
+      try{
+        const customer = await customerModel.findOne({ _id: userId });
+        const previousImage = customer.photo;
 
-	  const itemBody = _.pick(req.body, [
-		  'images',
-	  ]);
-//    console.log('sjshds',itemBody)
-    if(!itemBody){
-      res.status(400).json({message:"please provide your image"})
-      }
-    try{
-      if (userId) {
-      const existingId = await customerModel.findOne({
-        _id: userId,
-          isDeleted: false
-        });
-      if (existingId) {
-      const update = await customerModel.findOneAndUpdate(
-        {_id:userId},
-        {$set:itemBody},
-        {new: true}
-      );
-      if(update){
-        return res.status(200).json({message:"successfully updated!!"});
-       }
-      else{
-        return res.status(400).json({message:"unable to update picture"});
+        const fs = require('fs');
+
+      // Delete the previous image
+      if (previousImage) {
+        const imagePath = `uploads/images/${previousImage}`; // Provide the correct path to your images
+      try {
+        fs.unlinkSync(imagePath); // Delete the file
+       } catch (error) {
+          console.error(`Error deleting previous image: ${error.message}`);
+            }
+        }
+
+
+        const update = await customerModel.findOneAndUpdate(
+          {_id:userId},
+          {$set:{photo : image}},
+          {new: true}
+        );
+        if(update){
+          return res.status(200).json({message:"successfully updated!!"});
+         }
+        else{
+          return res.status(400).json({message:"unable to update picture"});
+            }
+        }
+        catch(error){
+        return res.status(400).json({message:"unable to process at this moment"});
           }
         }
-      else{
-          return res.status(400).josn({message:"customer doesn't exist!!!!"});
-        }   
-      }
-      }
-      catch(error){
-      return res.status(400).json({message:"unable to process at this moment"});
-        }
-        }
-  module.exports = {customerRegister,verification, customerLogin ,UpdateCustomerProfilepic};
+
+const deleteMany = async (req,res) => {
+  
+  try {
+		if (req.body.ids) {
+			const updatedData = await customerModel.updateMany(
+				{
+					_id: {
+						$in: req.body.ids
+					}
+				},
+				{
+					isDeleted: true
+				},
+				{
+					new: true
+				}
+			);
+			if (updatedData) {
+				res.json({
+					message: `customer's deleted successfully.`
+				});
+			} else {
+				res.status(400).json({
+					message: 'Cannot delete selected customer.'
+				});
+			}
+		} else
+			res.status(400).json({
+				message: 'No IDs to delete'
+			});
+	} catch (error) {
+		console.log(error);
+		return res.status(400).json({
+			message: 'Unable to process.'
+		});
+	}
+
+}
+const deletePermanent = async(req,res) =>{
+  try {
+		if (req.body.ids) {
+			const updatedData = await customerModel.deleteMany(
+				{
+					_id: {
+						$in: req.body.ids
+					}
+				});
+			if (updatedData) {
+				res.json({
+					message: `customer's deleted successfully.`
+				});
+			} else {
+				res.status(400).json({
+					message: 'Cannot delete selected customer.'
+				});
+			}
+		} else
+			res.status(400).json({
+				message: 'No IDs to delete'
+			});
+	} catch (error) {
+		console.log(error);
+		return res.status(400).json({
+			message: 'Unable to process.'
+		});
+	}
+}
+  
+  module.exports = {customerRegister,verification, customerLogin ,UpdateCustomerProfilepic, deleteMany, deletePermanent};

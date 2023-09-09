@@ -7,4 +7,6 @@ router.route('/register')
 router.route('/verify/:verificationToken').get(customerAPI.verification);
 router.route('/login').get(customerAPI.customerLogin);
 router.route('/updateImage').put(upload.single("photo"),customerAPI.UpdateCustomerProfilepic);
+router.route('/delete-many').delete(customerAPI.deleteMany);
+router.route('/delete-permanent').delete(customerAPI.deletePermanent);
 module.exports = router;

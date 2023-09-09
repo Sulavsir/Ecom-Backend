@@ -15,6 +15,7 @@ const AdminRegister = async(req,res)=>{
         'name',
         'photo',
     ]);
+
     if(!req.body.email) return res.status(400).json('email is empty!');
     if(!req.body.password) return res.status(400).json('password is empty');
     if(!req.body.name) return res.status(400).json('name is empty');
@@ -44,8 +45,12 @@ const AdminRegister = async(req,res)=>{
          ...Admin,
          verificationToken,
          verified: false,
-         password: hashPassword,
+         password: hashPassword
        });
+
+       if(req.file){
+        modelDoc.photo=req.file.filename
+       }
        const savedData = await modelDoc.save();
    
        if (savedData && savedData._id) {
@@ -176,7 +181,114 @@ const verification = async (req, res) => {
         });
         }
         return false;
-       
-    
       };
-  module.exports = {AdminRegister,verification, AdminLogin };
+
+      const UpdateAdminProfilepic = async(req,res) =>{
+        const userId = req.body.id
+  
+      const image = req.file.filename;
+  //    console.log('sjshds',itemBody)
+      if(!image){
+        res.status(400).json({message:"please provide your image"})
+        }
+      try{
+        const customer = await AdminModel.findOne({ _id: userId });
+        const previousImage = customer.photo;
+
+        const fs = require('fs');
+
+      // Delete the previous image
+      if (previousImage) {
+      const imagePath = `uploads/images/${previousImage}`; // Provide the correct path to your images
+      try {
+        fs.unlinkSync(imagePath); // Delete the file
+       } catch (error) {
+          console.error(`Error deleting previous image: ${error.message}`);
+            }
+        }
+
+        const update = await AdminModel.findOneAndUpdate(
+          {_id:userId},
+          {$set:{photo : image}},
+          {new: true}
+        );
+        if(update){
+          return res.status(200).json({message:"successfully updated!!"});
+         }
+        else{
+          return res.status(400).json({message:"unable to update picture"});
+            }
+        }
+        catch(error){
+        return res.status(400).json({message:"unable to process at this moment"});
+          }
+          }
+  
+  const deleteMany = async (req,res) => {
+    
+    try {
+      if (req.body.ids) {
+        const updatedData = await AdminModel.updateMany(
+          {
+            _id: {
+              $in: req.body.ids
+            }
+          },
+          {
+            isDeleted: true
+          },
+          {
+            new: true
+          }
+        );
+        if (updatedData) {
+          res.json({
+            message: `Admin's deleted successfully.`
+          });
+        } else {
+          res.status(400).json({
+            message: 'Cannot delete selected Admin.'
+          });
+        }
+      } else
+        res.status(400).json({
+          message: 'No IDs to delete'
+        });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        message: 'Unable to process.'
+      });
+    }
+  
+  }
+  const deletePermanent = async(req,res) =>{
+    try {
+      if (req.body.ids) {
+        const updatedData = await AdminModel.deleteMany(
+          {
+            _id: {
+              $in: req.body.ids
+            }
+          });
+        if (updatedData) {
+          res.json({
+            message: `Admin's deleted successfully.`
+          });
+        } else {
+          res.status(400).json({
+            message: 'Cannot delete selected Admin.'
+          });
+        }
+      } else
+        res.status(400).json({
+          message: 'No IDs to delete'
+        });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        message: 'Unable to process.'
+      });
+    }
+  }
+  module.exports = {AdminRegister,verification, AdminLogin , deleteMany ,deletePermanent , UpdateAdminProfilepic};
