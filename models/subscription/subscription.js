@@ -9,10 +9,12 @@ const subscription = new mongoose.Schema({
         type: String,
         required: true
       },
-      plans: [{
+      plans: 
+      [{
         name: {
           type: String,
-          required: true
+          required: true,
+          unique: true
         },
         description: {
           type: String,

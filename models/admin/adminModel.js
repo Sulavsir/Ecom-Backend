@@ -1,4 +1,8 @@
 const mongoose = require("mongoose");
+if (mongoose.connection.models['Admin-model']) {
+    // Unregister the existing model
+    delete mongoose.connection.models['Admin-model'];
+  }
 
 const AdminModel = new mongoose.Schema({
     name :{
@@ -27,11 +31,25 @@ const AdminModel = new mongoose.Schema({
     },
     allowcategory:{
         type: Number,
-        default: 1
+        default: 1,
+    },
+    planId:{
+        type: String,
+        required: false,
     },
     isDeleted:{
         type: Boolean,
         default: false
+    },
+    status:{
+        type: String,
+        enum:["active","inactive"],
+        default: "active"
+    },
+    price:{
+        type: Number,
+        require: false,
+        default: 0
     }
 },{timestamps: true})
 

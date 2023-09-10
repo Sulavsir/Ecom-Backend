@@ -1,4 +1,4 @@
-const AdminModel = require("../../models/Admin/AdminModel");
+const AdminModel = require("../../models/admin/adminModel");
 const customerModel = require("../../models/customer/customerModel");
 const SuperAdminModel = require("../../models/superAdmin/superAdminModel");
 const {generateVerificationToken,sendVerificationEmail} = require("../../helper/sendverification");

@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const customerAPI = require("./routes/customerRoutes/customerRoutes");
 const SuperAdminAPI = require("./routes/SuperAdminRoutes/SuperAdminRoutes");
 const AdminAPI = require("./routes/AdminRoutes/AdminRoutes");
+const subscriptionAPI  = require("./routes/subscriptionRoutes/subscriptionRoutes");
+const subscriptionKhalti = require("./routes/khaltiPayment/khaltipayment");
 
 
 
@@ -23,10 +25,11 @@ mongoose.set('strictQuery', true)
 
 //API ONLY
 
-app.use('/customer',customerAPI);
-app.use('/superAdmin',SuperAdminAPI);
-app.use('/admin',AdminAPI);
-
+app.use('/api/customer',customerAPI);
+app.use('/api/superAdmin',SuperAdminAPI);
+app.use('/api/admin',AdminAPI);
+app.use('/api/subscription',subscriptionAPI);
+app.use('/api/khalti/payment/subscriber',subscriptionKhalti);
 
 
 

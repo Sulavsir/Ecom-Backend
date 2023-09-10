@@ -1,5 +1,5 @@
 
-const {Subscription} = require('../../models/subscription/subscription');
+const Subscription = require('../../models/subscription/subscription');
 
 
 

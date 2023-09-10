@@ -28,7 +28,12 @@ const customerModel = new mongoose.Schema({
     isDeleted:{
         type: Boolean,
         default: false
-    }
+    },
+    permanentAddress:{
+        type: String,
+        required: true
+    },
+    TemporaryAddress:[String]
 },{timestamps: true})
 
 module.exports= mongoose.model("Customer-model",customerModel);

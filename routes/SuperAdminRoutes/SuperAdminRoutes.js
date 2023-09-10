@@ -12,7 +12,7 @@ router.route('/register')
 // .get(superAdminAPI.verification);
 // .delete('/')
 router.route('/verify/:verificationToken').get(superAdminAPI.verification);
-router.route('/login').get(superAdminAPI.SuperAdminLogin);
+router.route('/login').post(superAdminAPI.SuperAdminLogin);
 router.route('/updateProfilepic').put(upload.single("photo"),superAdminAPI.UpdateSuperAdminProfilepic);
 
 module.exports = router;

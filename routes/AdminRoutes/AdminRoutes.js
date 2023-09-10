@@ -9,7 +9,7 @@ router.route('/register')
 // .get(AdminAPI.verification);
 // .delete('/')
 router.route('/verify/:verificationToken').get(AdminAPI.verification);
-router.route('/login').get(AdminAPI.AdminLogin);
+router.route('/login').post(AdminAPI.AdminLogin);
 router.route('/updateProfilePic').put(upload.single("photo"),AdminAPI.UpdateAdminProfilepic)
 
 module.exports = router;
