@@ -25,6 +25,10 @@ const AdminModel = new mongoose.Schema({
     role:{
         type: String
     },
+    allowcategory:{
+        type: Number,
+        default: 1
+    },
     isDeleted:{
         type: Boolean,
         default: false
