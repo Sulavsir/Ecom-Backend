@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const customerAPI = require("./routes/customerRoutes/customerRoutes");
 const SuperAdminAPI = require("./routes/SuperAdminRoutes/SuperAdminRoutes");
 const AdminAPI = require("./routes/AdminRoutes/AdminRoutes");
-
+const productAPI = require('./controller/products/productRoutes')
 
 
 const cors = require("cors");
@@ -22,10 +22,12 @@ app.use(cors())
 mongoose.set('strictQuery', true)
 
 //API ONLY
+require('./Connectors/dbConnector')
 
 app.use('/customer',customerAPI);
 app.use('/superAdmin',SuperAdminAPI);
 app.use('/admin',AdminAPI);
+app.use('/products',productAPI)
 
 
 
@@ -42,7 +44,19 @@ app.use('/admin',AdminAPI);
 
 
 
-require('./Connectors/dbConnector')
+
+
+
+app.use(function (err, req, res, next) {
+    console.log('error is >>', err)
+    // send error response of whole application from here
+    // TODO set status code in response for error response
+    res.status(err.status || 400)
+    res.json({
+      status: err.status || 400,
+      msg: err.msg || err
+    })
+  })
 
 app.listen(process.env.PORT,async(err,done)=>{
     if(err){

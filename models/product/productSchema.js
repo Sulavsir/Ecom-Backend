@@ -59,11 +59,11 @@ salesQuantity:{
   type:Schema.Types.ObjectId,
   ref:'Admin-model'
  },
- createdAt:Date.now,
+ createdAt:Date,
 
  updatedBy:{
     type:Schema.Types.ObjectId,
-    ref:'admin'
+    ref:'Admin-model'
  },
  updatedAt:{
     type:Date
