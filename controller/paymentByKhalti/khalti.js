@@ -2,7 +2,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 const  Subscription = require('../../models/subscription/subscription');
-const adminModel = require('../../models/admin/adminModel')
+const adminModel = require('../../models/Admin/AdminModel')
 
 const initiateUrl = 'https://a.khalti.com/api/v2/epayment/initiate/';
 const verificationUrl = 'https://a.khalti.com/api/v2/epayment/lookup/';

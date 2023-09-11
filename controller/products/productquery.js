@@ -25,8 +25,6 @@ function map_product_req(productData, product) {
     product.quantity = productData.quantity;
   if (productData.images)
     product.images = productData.images;
-  if (productData.specificiations)
-    product.specificiations = productData.specificiations;
   if (productData.purchasedDate)
     product.purchasedDate = productData.purchasedDate;
   if (productData.salesDate)
@@ -131,18 +129,21 @@ function addRatings(data, productId) {
     return productSchema.findById(productId)
       .then((product) => {
         if (!product) {
-           return next({
+          return Promise.reject({
             msg: 'Product not found',
             status: 404
           });
         }
-        product.ratings.push(data);
+        console.log('Data received:', data);
+    
+          product.ratings.push(data);
         return product.save();
       })
       .catch((err) => {
-        return next (err);
+        return Promise.reject(err);
       });
   }
+  
   
 
 

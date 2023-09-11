@@ -1,4 +1,4 @@
-const AdminModel = require("../../models/admin/adminModel");
+const AdminModel = require("../../models/Admin/AdminModel");
 const customerModel = require("../../models/customer/customerModel");
 const SuperAdminModel = require("../../models/superAdmin/superAdminModel");
 const {generateVerificationToken,sendVerificationEmail} = require("../../helper/sendverification");
@@ -35,7 +35,7 @@ const AdminRegister = async(req,res)=>{
         }
         // Create verification token and link
       const verificationToken = generateVerificationToken(); // Implement this function
-      const verificationLink = `${req.protocol}://${req.get('host')}/Admin/verify/${verificationToken}?email=${encodeURIComponent(Admin.email)}`;
+      const verificationLink = `${req.protocol}://${req.get('host')}/api/admin/verify/${verificationToken}?email=${encodeURIComponent(Admin.email)}`;
 
        //password hash
        const hashPassword = await bcrypt.hash(Admin.password,12);

@@ -12,6 +12,7 @@ const ratingSchema = new Schema({
         type:String,
         required:true
     },
+    image:[String],
     user:{
         type:Schema.Types.ObjectId,
         ref: 'Customer-model'

@@ -25,7 +25,7 @@ function insert(req, res, next) {
   data.images = req.files.map(function (item, index) {
     return item.filename;
   })
-//   data.createdBy = req.user._id;
+  data.createdBy = req.user._id;
 //    data.createdBy = req.user._id;
 
   ItemQuery
@@ -116,7 +116,7 @@ function search(req, res, next) {
 
 function update(req, res, next) {
   const data = req.body;
-//   data.createdBy = req.user._id;
+  data.updatedBy = req.user._id;
   const newImages = req.files.map(function (item, index) {
     return item.filename;
   })
@@ -154,7 +154,9 @@ function remove(req, res, next) {
 }
 
 function addRatings(req, res, next) {
+    const uploadedFile = req.files;
   const data = req.body;
+  console.log('....',uploadedFile)
   if (!(req.body.message && req.body.point)) {
     return next({
       msg: 'Please provide message and point',
@@ -163,6 +165,7 @@ function addRatings(req, res, next) {
   }
   // append user in data
   data.user = req.user._id;
+  data.image = uploadedFile.map(file => file.filename);
   ItemQuery
     .addRatings(data, req.params.item_id)
     .then(function (item) {

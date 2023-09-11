@@ -15,6 +15,10 @@ const customerRegister = async(req,res)=>{
     'password',
     'name',
     'photo',
+    'permanentAddress',
+    'TemporaryAddress'
+
+
   ]);
   console.log('req.file',req.file)
   const filterData = {

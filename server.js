@@ -6,6 +6,8 @@ const customerAPI = require("./routes/customerRoutes/customerRoutes");
 const SuperAdminAPI = require("./routes/SuperAdminRoutes/SuperAdminRoutes");
 const AdminAPI = require("./routes/AdminRoutes/AdminRoutes");
 const productAPI = require('./controller/products/productRoutes')
+const subscriptionAPI = require('./routes/subscriptionRoutes/subscriptionRoutes')
+const subscriptionKhalti = require('./routes/khaltiPayment/khaltipayment')
 
 
 const cors = require("cors");
@@ -29,20 +31,7 @@ app.use('/api/superAdmin',SuperAdminAPI);
 app.use('/api/admin',AdminAPI);
 app.use('/api/subscription',subscriptionAPI);
 app.use('/api/khalti/payment/subscriber',subscriptionKhalti);
-app.use('/products',productAPI)
-
-
-
-
-
-
-
-
-
-
-
-
-
+app.use('/api/products',productAPI)
 
 
 
