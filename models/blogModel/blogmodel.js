@@ -21,9 +21,9 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Category is required']
   },
-  tags: {
-    type: String,
-  },
+  // tags: {
+  //   type: String,
+  // },
   description: {
     type: String,
     required: [true, 'Description is required']

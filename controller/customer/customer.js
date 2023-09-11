@@ -9,6 +9,25 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 
+
+
+const allverifedCustomer = async(req,res) =>{
+  const found = await customerModel.find({verified: true});
+  if(found){
+    return res.status(200).json({message:"All the verifed customer's",found: found});
+  }else{
+    return res.status(400).json({message:"No verified customer's",found: found});
+  }
+} 
+const allUnverifedCustomer = async(req,res) =>{
+  const found = await customerModel.find({verified: false});
+  if(found){
+    return res.status(200).json({message:"All the verifed customer's",found: found});
+  }else{
+    return res.status(400).json({message:"No verified customer's",found: found});
+  }
+} 
+
 const customerRegister = async(req,res)=>{
   const Clients = _.pick(req.body,[
     'email',
@@ -41,7 +60,7 @@ const customerRegister = async(req,res)=>{
       }
         // Create verification token and link
       const verificationToken = generateVerificationToken(); // Implement this function
-      const verificationLink = `${req.protocol}://${req.get('host')}/customer/verify/${verificationToken}?email=${encodeURIComponent(Clients.email)}`;
+      const verificationLink = `${req.protocol}://${req.get('host')}/api/customer/verify/${verificationToken}?email=${encodeURIComponent(Clients.email)}`;
       
       
        //password hash
@@ -302,4 +321,4 @@ const deletePermanent = async(req,res) =>{
 	}
 }
   
-  module.exports = {customerRegister,verification, customerLogin ,UpdateCustomerProfilepic, deleteMany, deletePermanent};
+  module.exports = {customerRegister,verification, customerLogin ,UpdateCustomerProfilepic, deleteMany, deletePermanent, allverifedCustomer ,allUnverifedCustomer};

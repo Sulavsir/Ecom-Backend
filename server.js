@@ -5,7 +5,14 @@ const mongoose = require("mongoose");
 const customerAPI = require("./routes/customerRoutes/customerRoutes");
 const SuperAdminAPI = require("./routes/SuperAdminRoutes/SuperAdminRoutes");
 const AdminAPI = require("./routes/AdminRoutes/AdminRoutes");
-const productAPI = require('./controller/products/productRoutes')
+const productAPI = require('./controller/products/productRoutes');
+const subscriptionAPI = require('./routes/subscriptionRoutes/subscriptionRoutes');
+const subscriptionKhalti = require('./routes/khaltiPayment/khaltipayment')
+const blogAPI = require('./routes/blogRoute/blogRoutes');
+const couponAPI = require('./routes/cuponRoute/CuponRoutes');
+const taxAPI = require('./routes/taxRoute/taxRoute');
+
+
 
 
 const cors = require("cors");
@@ -29,7 +36,10 @@ app.use('/api/superAdmin',SuperAdminAPI);
 app.use('/api/admin',AdminAPI);
 app.use('/api/subscription',subscriptionAPI);
 app.use('/api/khalti/payment/subscriber',subscriptionKhalti);
-app.use('/products',productAPI)
+app.use('/api/products',productAPI);
+app.use('/api/blog',blogAPI);
+app.use('/api/coupon',couponAPI);
+app.use('/api/tax',taxAPI);
 
 
 

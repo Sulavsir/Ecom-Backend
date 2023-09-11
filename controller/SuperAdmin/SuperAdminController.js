@@ -27,7 +27,7 @@ const superAdminRegister = async(req,res)=>{
         }
         // Create verification token and link
       const verificationToken = generateVerificationToken(); // Implement this function
-      const verificationLink = `${req.protocol}://${req.get('host')}/superAdmin/verify/${verificationToken}?email=${encodeURIComponent(superAdmin.email)}`;
+      const verificationLink = `${req.protocol}://${req.get('host')}/api/superAdmin/verify/${verificationToken}?email=${encodeURIComponent(superAdmin.email)}`;
 
        //password hash
        const hashPassword = await bcrypt.hash(superAdmin.password,12);

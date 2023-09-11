@@ -1,4 +1,4 @@
-const AdminModel = require("../../models/admin/adminModel");
+const AdminModel = require("../../models/Admin/AdminModel");
 const customerModel = require("../../models/customer/customerModel");
 const SuperAdminModel = require("../../models/superAdmin/superAdminModel");
 const {generateVerificationToken,sendVerificationEmail} = require("../../helper/sendverification");
@@ -7,6 +7,24 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+
+
+const allverifedAdmin = async(req,res) =>{
+  const found = await AdminModel.find({verified: true});
+  if(found){
+    return res.status(200).json({message:"All the verifed Admin's",found: found});
+  }else{
+    return res.status(400).json({message:"No verified Admin's",found: found});
+  }
+} 
+const allUnverifedAdmin = async(req,res) =>{
+  const found = await AdminModel.find({verified: false});
+  if(found){
+    return res.status(200).json({message:"All the verifed Admin's",found: found});
+  }else{
+    return res.status(400).json({message:"No verified Admin's",found: found});
+  }
+} 
 
 const AdminRegister = async(req,res)=>{
     const Admin = _.pick(req.body,[
@@ -35,7 +53,7 @@ const AdminRegister = async(req,res)=>{
         }
         // Create verification token and link
       const verificationToken = generateVerificationToken(); // Implement this function
-      const verificationLink = `${req.protocol}://${req.get('host')}/Admin/verify/${verificationToken}?email=${encodeURIComponent(Admin.email)}`;
+      const verificationLink = `${req.protocol}://${req.get('host')}/api/admin/verify/${verificationToken}?email=${encodeURIComponent(Admin.email)}`;
 
        //password hash
        const hashPassword = await bcrypt.hash(Admin.password,12);
@@ -291,4 +309,4 @@ const verification = async (req, res) => {
       });
     }
   }
-  module.exports = {AdminRegister,verification, AdminLogin , deleteMany ,deletePermanent , UpdateAdminProfilepic};
+  module.exports = {AdminRegister,verification, AdminLogin , deleteMany ,deletePermanent , UpdateAdminProfilepic, allUnverifedAdmin, allverifedAdmin};
