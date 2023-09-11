@@ -8,6 +8,24 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 
+
+const allverifedAdmin = async(req,res) =>{
+  const found = await AdminModel.find({verified: true});
+  if(found){
+    return res.status(200).json({message:"All the verifed Admin's",found: found});
+  }else{
+    return res.status(400).json({message:"No verified Admin's",found: found});
+  }
+} 
+const allUnverifedAdmin = async(req,res) =>{
+  const found = await AdminModel.find({verified: false});
+  if(found){
+    return res.status(200).json({message:"All the verifed Admin's",found: found});
+  }else{
+    return res.status(400).json({message:"No verified Admin's",found: found});
+  }
+} 
+
 const AdminRegister = async(req,res)=>{
     const Admin = _.pick(req.body,[
         'email',
@@ -291,4 +309,4 @@ const verification = async (req, res) => {
       });
     }
   }
-  module.exports = {AdminRegister,verification, AdminLogin , deleteMany ,deletePermanent , UpdateAdminProfilepic};
+  module.exports = {AdminRegister,verification, AdminLogin , deleteMany ,deletePermanent , UpdateAdminProfilepic, allUnverifedAdmin, allverifedAdmin};
