@@ -88,6 +88,10 @@ salesQuantity:{
      discountValue: String
 
  },
+ isRemoved:{
+    type:Boolean,
+    default:false
+ },
  tags:[String],
  ratings:{
      type:[ratingSchema]

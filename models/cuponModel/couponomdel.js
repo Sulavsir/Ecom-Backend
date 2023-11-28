@@ -8,7 +8,7 @@ const couponSchema = new mongoose.Schema({
   },
   AdminId:{
     type:mongoose.Types.ObjectId,
-    required: true
+    // required: true
   },
   productId: {
     type: mongoose.Types.ObjectId,

@@ -1,5 +1,6 @@
+const { result } = require('lodash');
 const productSchema = require('../../models/product/productSchema');
-
+const {isValid} = require('mongoose').Types.ObjectId;
 function map_product_req(productData, product) {
     if (productData.updatedBy)
     product.updatedBy = productData.updatedBy;
@@ -85,7 +86,7 @@ function insert(data) {
   return newproduct.save();
 
 }
-function update(data, productId) {
+async function update(data, productId) {
     console.log('data >>', data);
     console.log('type of data .filetoremove', typeof data.filesToRemove);
   
@@ -100,6 +101,7 @@ function update(data, productId) {
   
         // Assign the newImages directly to the images property
         product.images = data.newImages;
+
   
         // To remove existing images
         if (data.filesToRemove) {
@@ -125,7 +127,7 @@ function remove(id) {
   return productSchema.findByIdAndRemove(id);
 }
 
-function addRatings(data, productId) {
+async function addRatings(data, productId) {
     return productSchema.findById(productId)
       .then((product) => {
         if (!product) {
@@ -144,7 +146,36 @@ function addRatings(data, productId) {
       });
   }
   
-  
+  async function removeAllItems(ids){
+   try {
+       if(ids === undefined){
+           throw {msg:'no ids'}
+        }
+        const { validIds, invalidIds } = ids.reduce(
+            (acc, id) => {
+                if (isValid(id)) {
+                    acc.validIds.push(id);
+                } else {
+                    acc.invalidIds.push(id);
+                }
+                return acc;
+            },
+            { validIds: [], invalidIds: [] }
+        );
+        const product = await productSchema.updateMany(
+            { _id: { $in: validIds } },
+            { $set: { isRemoved: true } }
+        );
+        console.log('product-->',product)
+        if(product.modifiedCount === 0){
+            console.log('errro')
+          throw {msg: 'Products not found .Please enter  correct ids'  };
+        }
+        return product
+   } catch (error) {
+    throw { msg:error };
+   }
+  }
 
 
 module.exports = {
@@ -152,5 +183,7 @@ module.exports = {
   insert,
   update,
   remove,
-  addRatings
+  addRatings,
+  removeAllItems
+
 }

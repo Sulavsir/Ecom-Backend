@@ -175,7 +175,23 @@ function addRatings(req, res, next) {
       next(err);
     })
 }
+// to remove all items
 
+  function removeAllItems(req,res,next){
+    console.log('first')
+    const ids = req.body.ids
+    ItemQuery
+    .removeAllItems(ids)
+    .then((item)=>{
+      return res.status(200).json({msg:'item deleted successfully',item}) 
+    })
+    .catch((err)=>{
+        console.log(err)
+    next(err)
+    })
+
+
+}
 module.exports = {
   getAllItem,
   getById,
@@ -183,5 +199,6 @@ module.exports = {
   insert,
   update,
   remove,
-  addRatings
+  addRatings,
+  removeAllItems
 }

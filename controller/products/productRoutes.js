@@ -16,7 +16,11 @@ router.route('/')
   .post(
     authenticate,
     adminAuthenticate,
-     uploader.array('images'), ItemCtrl.insert);
+     uploader.array('images'), ItemCtrl.insert)
+   .delete(
+    ItemCtrl.removeAllItems
+   );
+
 
 router.route('/add_ratings/:item_id')
   .post(
@@ -30,6 +34,7 @@ router.route('/:id')
     adminAuthenticate,
     uploader.array('images'), ItemCtrl.update)
   .delete( ItemCtrl.remove);
+  //to delete all items 
 
 
 module.exports = router;
