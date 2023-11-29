@@ -1,4 +1,4 @@
-const categoriesQuery = require('./categories_query')
+const categoriesQuery = require('./categories_query');
 
 async function insertion(req, res, next) {
     try {
@@ -56,9 +56,23 @@ async function insertion(req, res, next) {
     }
 }
 
+async function removeMultipleCategories(req, res, next) {
+    const ids = req.body.ids;
+    try {
+        await categoriesQuery.removeMultipleCategories(ids);
+        res.status(200).json({
+            msg: 'Items deleted successfully'
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 
 
 module.exports={
-    insertion
+    insertion,
+    removeMultipleCategories
+
 }

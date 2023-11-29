@@ -1,5 +1,5 @@
 const Category = require('../../models/categories/categories')
-
+const {isValid} = require('mongoose').Types.ObjectId;
 function map_categories(newCategories, categories) {
     if (newCategories.categorie) {
         categories.categorie = newCategories.categorie;
@@ -15,10 +15,6 @@ function map_categories(newCategories, categories) {
 
 function insert (data){
     let Categories = new Category({})
-//     console.log('data',data)
-// if(data.id){
- 
-// }
 map_categories(data,Categories)
 return Categories.save()
 
@@ -47,9 +43,46 @@ function update(data,id){
     })
 }
 
+async function removeMultipleCategories(ids) {
+    try {
+        if (ids === undefined) {
+            throw { msg: 'Information cannot be empty' };
+        }
+
+        const { validIds, invalidIds } = ids.reduce(
+            (acc, id) => {
+                if (isValid(id)) {
+                    acc.validIds.push(id);
+                } else {
+                    acc.invalidIds.push(id);
+                }
+                return acc;
+            },
+            { validIds: [], invalidIds: [] }
+        );
+
+        if (validIds.length === 0) {
+            throw { msg: 'Invalid IDs' };
+        }
+
+        const result = await Category.deleteMany(
+            { _id: { $in: validIds } }
+        );
+
+        if (result.deletedCount === 0) {
+            throw { msg: 'categoried already deleted' };
+        }
+
+        return result;
+    } catch (error) {
+        throw { msg: error };
+    }
+}
+
 
 module.exports ={
     insert,
     findAll,
-    update
+    update,
+    removeMultipleCategories
 }
