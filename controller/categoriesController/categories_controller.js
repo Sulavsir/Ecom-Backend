@@ -3,13 +3,13 @@ const categoriesQuery = require('./categories_query');
 async function insertion(req, res, next) {
     try {
         let data = req.body;
-        console.log('data',data)
+        console.log('data---->',data)
         console.log(data.subCategories)
         let condition = {};
         const existingCategories = await categoriesQuery.findAll(condition);
         console.log('existingCategories', existingCategories);
 
-        const existingCategory = existingCategories.find(category => category.categorie === data.categorie);
+        const existingCategory = existingCategories.find(category => category.category === data.category);
 
         if (existingCategory) {
             console.log('data.subCategories:', data.subCategories);
@@ -56,15 +56,47 @@ async function insertion(req, res, next) {
     }
 }
 
+// for update category
+async function updateCategory(req,res,next){
+    const data=req.body
+    const id=req.query.id
+    let existingCategories;
+    try {
+      existingCategories = await categoriesQuery.update(data,id)
+     existingCategories.category = data.category 
+     console.log('existingCategories',existingCategories)  
+     return res.status(200).json({
+        msg: 'Category updated successfully',
+        existingCategories,
+    });
+     
+    } catch (error) {
+        next(error)
+    }
+}
+// for delete category
 async function removeMultipleCategories(req, res, next) {
     const ids = req.body.ids;
     try {
         await categoriesQuery.removeMultipleCategories(ids);
         res.status(200).json({
-            msg: 'Items deleted successfully'
+            msg: 'Category deleted successfully'
         });
     } catch (error) {
         next(error);
+    }
+}
+
+//for delete subCategory
+async function removeSubcategory(req, res, next) {
+    const { categoryId, subCategoryId } = req.query;
+    try {
+     const result=   await categoriesQuery.deleteSubCategory(categoryId, subCategoryId)
+        res.status(200).json({
+            msg: 'Subcategory deleted successfully'
+        });
+    } catch (error) {
+        next(error); 
     }
 }
 
@@ -73,6 +105,8 @@ async function removeMultipleCategories(req, res, next) {
 
 module.exports={
     insertion,
-    removeMultipleCategories
+    removeMultipleCategories,
+    updateCategory,
+    removeSubcategory
 
 }

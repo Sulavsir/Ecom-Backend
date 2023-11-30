@@ -1,8 +1,9 @@
+const { result } = require('lodash');
 const Category = require('../../models/categories/categories')
 const {isValid} = require('mongoose').Types.ObjectId;
 function map_categories(newCategories, categories) {
-    if (newCategories.categorie) {
-        categories.categorie = newCategories.categorie;
+    if (newCategories.category) {
+        categories.category = newCategories.category;
     }
     
     if (newCategories.subCategories) {
@@ -14,6 +15,7 @@ function map_categories(newCategories, categories) {
 
 
 function insert (data){
+    console.log('req.body',data)
     let Categories = new Category({})
 map_categories(data,Categories)
 return Categories.save()
@@ -29,7 +31,12 @@ return Category
 }
 
 function update(data,id){
-    return Category.findOne(id)
+    if(id === undefined){
+        throw({msg:'id cannt be null'})
+    }
+    console.log('id--->',id)
+    
+    return Category.findOne({_id:id})
     .then((categories)=>{
         if(!categories){
             throw ({msg:'no such categories'})
@@ -79,10 +86,34 @@ async function removeMultipleCategories(ids) {
     }
 }
 
+async function deleteSubCategory(categoryId,subCategoryId){
+   
+    try {
+        if(categoryId ===undefined || subCategoryId===undefined){
+            throw({msg:'Id cannt be empty'})
+        } 
+
+       await Category.updateOne({_id:categoryId},
+            {$pull:{subCategories:{_id:subCategoryId}}}
+            )
+            .then((result)=>{
+                if(result.modifiedCount===0){
+                    throw({msg:'unable to delete subcategory'})
+                }
+                return result
+            })
+            .catch((error)=>{
+                throw({msg:'error while delete',error})
+            })
+    } catch (error) {
+        throw({msg:error})
+    }
+}
 
 module.exports ={
     insert,
     findAll,
     update,
-    removeMultipleCategories
-}
+    removeMultipleCategories,
+    deleteSubCategory
+} 

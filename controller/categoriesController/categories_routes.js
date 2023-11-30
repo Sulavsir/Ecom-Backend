@@ -4,7 +4,9 @@ const CategoryController = require('./categories_controller')
 
 router.route('/')
 .post(CategoryController.insertion)
+.put(CategoryController.updateCategory)
 .delete(CategoryController.removeMultipleCategories)
 
-
+router.route('/delete')
+.delete(CategoryController.removeSubcategory)
 module.exports = router;
