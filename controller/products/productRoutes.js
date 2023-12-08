@@ -14,8 +14,8 @@ router.route('/')
     authenticate, 
     ItemCtrl.getAllItem)
   .post(
-    authenticate,
-    adminAuthenticate,
+    // authenticate,
+    // adminAuthenticate,
      uploader.array('images'), ItemCtrl.insert)
    .delete(
     ItemCtrl.removeAllItems

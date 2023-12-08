@@ -25,6 +25,10 @@ const productSchema = new Schema({
      type:Schema.Types.ObjectId,
      ref:'categories'
  },
+ subCategoryId:{
+    type:Schema.Types.ObjectId,
+    ref:'categories'
+ },
 brand:{
     type:String
 },
@@ -54,7 +58,7 @@ salesQuantity:{
  size:[String],
  images:[String],
  purchasedDate:Date,
- solesDate:Date,
+ salesDate:Date,
  returnedDate:Date,
  createdBy:{
   type:Schema.Types.ObjectId,

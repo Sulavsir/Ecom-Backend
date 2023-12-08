@@ -8,6 +8,8 @@ function map_product_req(productData, product) {
     product.description = productData.description;
   if (productData.category)
     product.category = productData.category;
+if (productData.subCategoryId)
+    product.subCategoryId = productData.subCategoryId;
   if (productData.color)
     product.color = productData.color;
   if (productData.price)
@@ -75,14 +77,7 @@ function insert(data) {
   // map data
   let newproduct = new productSchema({});
   map_product_req(data, newproduct)
-  // return new Promise(function (resolve, reject) {
-  //   then(function (data) {
-  //     resolve(data)
-  //   })
-  //     .catch(function (err) {
-  //       reject(err)
-  //     })
-  // })
+  
   return newproduct.save();
 
 }

@@ -29,6 +29,29 @@ return Category
     _id:-1
 })
 }
+// for update subcategory
+async function updateSubcategory(categoryId, subCategoryId, data) {
+    try {
+        if (categoryId === undefined || subCategoryId === undefined) {
+            throw { msg: 'Id cannot be empty' };
+        }
+
+        const updatesubcategory = await Category.findOneAndUpdate(
+            { _id: categoryId, 'subCategories._id': subCategoryId },
+            { $set: { 'subCategories.$.name': data.name } },
+            { new: true }
+        );
+
+        if (!updatesubcategory) {
+            throw { msg: 'Unable to update' };
+        }
+
+        return updatesubcategory;
+    } catch (error) {
+        throw { msg: error };
+    }
+}
+
 
 function update(data,id){
     if(id === undefined){
@@ -86,6 +109,7 @@ async function removeMultipleCategories(ids) {
     }
 }
 
+
 async function deleteSubCategory(categoryId,subCategoryId){
    
     try {
@@ -115,5 +139,6 @@ module.exports ={
     findAll,
     update,
     removeMultipleCategories,
-    deleteSubCategory
+    deleteSubCategory,
+    updateSubcategory
 } 

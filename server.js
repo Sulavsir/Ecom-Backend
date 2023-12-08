@@ -11,7 +11,8 @@ const subscriptionKhalti = require('./routes/khaltiPayment/khaltipayment')
 const blogAPI = require('./routes/blogRoute/blogRoutes');
 const couponAPI = require('./routes/cuponRoute/CuponRoutes');
 const taxAPI = require('./routes/taxRoute/taxRoute');
-const Categories = require('./controller/categoriesController/categories_routes')
+const Categories = require('./controller/categoriesController/categories_routes');
+const KhaltiPaymentforProduct = require('./controller/KhaltipaymentforProduct/khalti_routes')
 
 
 
@@ -43,6 +44,8 @@ app.use('/api/coupon',couponAPI);
 app.use('/api/tax',taxAPI);
 // for categories 
 app.use('/api/categories',Categories)
+// for khalti payment and find sales product and other sales related routes
+app.use('/api/sales',KhaltiPaymentforProduct)
 
 
 

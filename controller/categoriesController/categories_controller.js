@@ -1,5 +1,5 @@
 const categoriesQuery = require('./categories_query');
-
+// for insertion of category
 async function insertion(req, res, next) {
     try {
         let data = req.body;
@@ -55,6 +55,25 @@ async function insertion(req, res, next) {
         next(error);
     }
 }
+// update subcategory
+async function updateSubcategory(req,res,next){
+    try {
+        const data = req.body;
+        const {categoryId,subCategoryId}=req.query
+        const updateSubcategory = await categoriesQuery.updateSubcategory(categoryId,subCategoryId,data)
+        if(!updateSubcategory){
+        return res.status(400).json({
+            msg:'unable to update'
+        })
+        }
+        return res.status(200).json({
+            msg: 'Subcategory updated successfully',
+            data:updateSubcategory
+        })
+    } catch (error) {
+        next(error)
+    }
+    }
 
 // for update category
 async function updateCategory(req,res,next){
@@ -107,6 +126,7 @@ module.exports={
     insertion,
     removeMultipleCategories,
     updateCategory,
-    removeSubcategory
+    removeSubcategory,
+    updateSubcategory
 
 }

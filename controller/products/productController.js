@@ -1,4 +1,6 @@
 const ItemQuery = require('./productquery');
+const Category = require('../../models/categories/categories')
+const {isValid} = require('mongoose').Types.ObjectId
 
 function getAllItem(req, res, next) {
   let condition = {};
@@ -16,16 +18,29 @@ function getAllItem(req, res, next) {
 
 }
 
-function insert(req, res, next) {
+async function insert(req, res, next) {
   const data = req.body;
-  // todo prepare data
-  // eg .images, createdBy
+  const categoryId= data.category
+  const validId = isValid(categoryId)
+  console.log('validId',validId)
+  const subCategoryId = data.subCategoryId
   console.log('req.body is >.>', req.body)
   console.log('req.files >>', req.files)
+  if(categoryId === undefined || data.subCategoryId === undefined){
+    return res.status(400).json({msg:'category and subcategory cannt be null'})
+  }
+  const existinfCategory =  await Category.findOne({_id:categoryId,'subCategories._id':subCategoryId})
+  console.log('Category',Category)
+    if(!existinfCategory){
+        return res.status(400).json({
+            msg:'irrelevant category and subcategory please check properly'
+        })
+    }
+  
   data.images = req.files.map(function (item, index) {
     return item.filename;
   })
-  data.createdBy = req.user._id;
+//   data.createdBy = req.user._id;
 //    data.createdBy = req.user._id;
 
   ItemQuery
