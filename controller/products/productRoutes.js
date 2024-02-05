@@ -26,7 +26,7 @@ router.route('/add_ratings/:item_id')
   .post(
     authenticate,
     uploader.array('image',3),
-     ItemCtrl.addRatings)
+     ItemCtrl.addRatings) 
 
 router.route('/:id')
   .get( ItemCtrl.getById)

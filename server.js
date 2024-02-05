@@ -65,6 +65,7 @@ app.use('/api/sales',KhaltiPaymentforProduct)
 
 
 
+
 app.use(function (err, req, res, next) {
     console.log('error is >>', err)
     // send error response of whole application from here
@@ -80,7 +81,7 @@ app.listen(process.env.PORT,async(err,done)=>{
     if(err){
         console.log('object')
     }
-    console.log(`connected to server ${process.env.PORT}`);
+    console.log(`connected to server http://192.168.1.81:${process.env.PORT}`);
 })
 
 

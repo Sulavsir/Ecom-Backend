@@ -87,7 +87,7 @@ salesQuantity:{
      discountItem:Boolean,
      discountType:{
          type:String,
-         enum:['percentage','value','quantity']
+         enum:['percentage','value']
      },
      discountValue: String
 

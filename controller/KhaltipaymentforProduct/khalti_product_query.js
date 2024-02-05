@@ -39,9 +39,12 @@ function map_khalti_payment(purchaseDetails,product){
 }
 
 function initiateKhaltiPayment(data){
-//todo khalti query 
-throw ({msg:'query here'})
+    // to save a khalti payment 
+let newKhaltipayment = new khaltipayment({})
+map_khalti_payment(data,newKhaltipayment)
+return newKhaltipayment.save();
 }
+// to find all khaltipayment related sales 
 function findAll(condition){
   khaltipayment
   .find(condition)
@@ -60,7 +63,7 @@ function findAll(condition){
   })
 
 }
-
+// find individual khalti payment
 function findindividulaSalesProduct(id){
     khaltipayment
     .findOne({orderId:id})
@@ -76,6 +79,7 @@ function findindividulaSalesProduct(id){
     })
 }
 
+// update status 
 function updateStatus(id,status){
     try {
        khaltipayment

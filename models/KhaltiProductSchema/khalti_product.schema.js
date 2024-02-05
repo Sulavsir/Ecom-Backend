@@ -12,9 +12,7 @@ const Product_Payment = new Schema({
   salesDate: {
     type: Date,
   },
-  size:{
-    type:Number
-  },
+  size:[Number],
   discount: {
     discountItem: Boolean,
     discountType: {
@@ -38,6 +36,7 @@ const Product_Payment = new Schema({
   deliveryTpye: {
     type: String,
     enum: ["pickup", "homedelivery"],
+    required:true
   },
   status: {
     type: String,
