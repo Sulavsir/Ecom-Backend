@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 const Product_Payment = new Schema({
   productDetails:[{}],
+  clientID:{
+    type:mongoose.Schema.ObjectId,
+    ref:'Customer-model'
+  },
   transactionId: {
     type: String,
   },
