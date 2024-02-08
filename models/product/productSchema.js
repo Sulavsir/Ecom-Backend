@@ -100,6 +100,7 @@ salesQuantity:{
  ratings:{
      type:[ratingSchema]
  }
+ 
 
 },{
     timestamps: true

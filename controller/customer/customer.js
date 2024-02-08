@@ -2,6 +2,7 @@ const AdminModel = require("../../models/Admin/AdminModel");
 const customerModel = require("../../models/customer/customerModel");
 const SuperAdminModel = require("../../models/superAdmin/superAdminModel");
 const upload = require("../../helper/uploadImage")
+const Purchase = require('../../models/KhaltiProductSchema/khalti_product.schema')
 const {generateVerificationToken,sendVerificationEmail} = require("../../helper/sendverification");
 require('dotenv').config();
 const _ = require('lodash')
@@ -324,5 +325,33 @@ const deletePermanent = async(req,res) =>{
 		});
 	}
 }
+
+const showAllUsersHistory = async (req,res) => {
+  try {
+const {clientID, paymentMethod}=req.body;
+const conditions={
+  clientID:clientID,//req.user._id change garne when i receive access permission or token 
+  paymentMethod: { $in: ["KHALTI", "STRIPE", "CASH_ON_DELIVERY", "HAND_CASH"]} 
+}
+if(paymentMethod)
+{
+  conditions.paymentMethod=paymentMethod;
+}
+const allHistory = await Purchase.find(conditions)
+if(allHistory){
+  return res.status(200).json({
+    data:allHistory
+  })
+}
+return res.status(404).json({
+  msg:"User has not made any purchase yet"
+})
+  }catch (error) {
+    console.log("first",error)
+    return res.status(500).json({
+      msg:"Internal server error"
+    })
+  }
+}
   
-  module.exports = {customerRegister,verification, customerLogin ,UpdateCustomerProfilepic, deleteMany, deletePermanent, allverifedCustomer ,allUnverifedCustomer};
+  module.exports = {customerRegister,verification, customerLogin ,UpdateCustomerProfilepic, deleteMany, deletePermanent, allverifedCustomer ,allUnverifedCustomer,showAllUsersHistory};
