@@ -1,5 +1,4 @@
 const khaltipayment_query = require('./khalti_product_query')
-const ProductSchema = require('../../controller/products/productquery')
 const Client = require('../../models/customer/customerModel')
 const {generateOrderID} = require('../../helper/generate_orderid')
 const axios = require('axios');
