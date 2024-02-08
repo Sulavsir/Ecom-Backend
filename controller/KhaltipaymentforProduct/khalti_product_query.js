@@ -97,7 +97,7 @@ function updateStatus(id,status){
             console.log('error while update status')
             throw({error:error})
         })
-    } catch (error) {
+    } catch (error) {   
         throw({error:error})
     }
 }
