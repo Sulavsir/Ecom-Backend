@@ -45,7 +45,7 @@ map_khalti_payment(data,newKhaltipayment)
 return newKhaltipayment.save();
 }
 // to find all khaltipayment related sales 
-function findAll(condition){
+function findAll(condition){ 
   khaltipayment
   .find(condition)
   .sort({
