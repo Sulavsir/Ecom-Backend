@@ -5,5 +5,4 @@ router.route('/')
 .post(khaltiController.khaltiPayment)
 .get(khaltiController.findAllSalesProduct)
 
-
-module.exports= router
+module.exports= router;

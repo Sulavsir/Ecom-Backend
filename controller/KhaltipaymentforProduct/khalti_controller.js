@@ -2,7 +2,8 @@ const khaltipayment_query = require('./khalti_product_query')
 const Client = require('../../models/customer/customerModel')
 const {generateOrderID} = require('../../helper/generate_orderid')
 const axios = require('axios');
-const KhaltiValidation= require('../../helper/validateKhaltidata')
+const KhaltiValidation= require('../../helper/validateKhaltidata');
+
 
 // for khalti 
 const initiateUrl = "https://a.khalti.com/api/v2/epayment/initiate/"
@@ -31,8 +32,13 @@ async function khaltiPayment(req, res, next) {
                         msg: 'You are unauthorized'
                     });
                 }
+                console.log("process.env.JWT_SECRET",process.env.JWT_SECRET)
+                const token = jwt.sign(data,process.env.JWT_SECRET)
+                //  const Jsondata = JSON.stringify(token);
+                //  const encodedData = querystring.escape(Jsondata)
+                // console.log("data--->",data.website_url)
                    const payload = {
-                    "return_url": `https://api.koseli.app/api/khalti/payment/success/`,
+                    "return_url": `http://localhost:7000/api/khalti/payment/success/`,
                     "website_url": data.website_url,
                     "amount": khaltivalidation.totalAmount * 100,
                     "purchase_order_id": orderId,
@@ -43,11 +49,12 @@ async function khaltiPayment(req, res, next) {
                         "email": client.email,
                     }
                 };
-        console.log('payload',payload)
+                console.log('payload',payload)
                 const initiateResponse = await axios.post(initiateUrl, payload, {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Key ${authorizationKey}`
+                        Authorization: `Key ${authorizationKey}`,
+                        token:`${token}`
                     }
                 });
         
@@ -76,7 +83,25 @@ async function khaltiPayment(req, res, next) {
         }
 }
 
-    
+
+
+// for khaltipayment verifications
+async function verifyKhaltiPayment(req,res){
+  const {pidx,amount,purchase_order_id,purchase_order_name,transaction_id}=req.query;
+  const verificationResponse = await axios.post(
+    verificationUrl,
+    { pidx },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Key ${authorizationKey}`
+      }
+    }
+  );
+  if(verificationResponse.data.status==='completed'){
+
+  }
+}
   
    
 // to find all product 
@@ -95,5 +120,6 @@ async function findAllSalesProduct(req,res,next){
 
 module.exports ={
 findAllSalesProduct,
-khaltiPayment
+khaltiPayment,
+verifyKhaltiPayment
 }
