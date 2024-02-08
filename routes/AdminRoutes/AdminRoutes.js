@@ -15,4 +15,5 @@ router.route('/delete-permanent').delete(AdminAPI.deletePermanent);
 router.route('/verifiedAdmins').get(AdminAPI.allverifedAdmin);
 router.route('/UnverifiedAdmins').get(AdminAPI.allUnverifedAdmin);
 
+
 module.exports = router;

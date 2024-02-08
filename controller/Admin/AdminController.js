@@ -309,4 +309,7 @@ const verification = async (req, res) => {
       });
     }
   }
-  module.exports = {AdminRegister,verification, AdminLogin , deleteMany ,deletePermanent , UpdateAdminProfilepic, allUnverifedAdmin, allverifedAdmin};
+
+
+
+  module.exports = {AdminRegister,verification, AdminLogin , deleteMany ,deletePermanent , UpdateAdminProfilepic, allUnverifedAdmin, allverifedAdmin, };
