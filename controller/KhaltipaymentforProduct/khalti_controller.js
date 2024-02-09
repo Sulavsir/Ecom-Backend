@@ -1,6 +1,6 @@
-const khaltipayment_query = require('./khalti_product_query')
-const Client = require('../../models/customer/customerModel')
-const {generateOrderID} = require('../../helper/generate_orderid')
+const khaltipayment_query = require('./khalti_product_query');
+const Client = require('../../models/customer/customerModel');
+const {generateOrderID} = require('../../helper/generate_orderid');
 const axios = require('axios');
 const KhaltiValidation= require('../../helper/validateKhaltidata');
 
@@ -18,11 +18,9 @@ async function khaltiPayment(req, res, next) {
     try {
         
         const khaltivalidation = await KhaltiValidation(data)
-        console.log(typeof(khaltivalidation))
         if(typeof(khaltivalidation)==='object'){
             const error = JSON.stringify(khaltivalidation)
             if(!JSON.parse(error).error?.msg){
-                console.log('---------->',khaltivalidation.calculatedKhaltiData)
                 // Your validation was successful, continue with the payment initiation logic
               const khalti = khaltivalidation.calculatedKhaltiData
                 const client = await Client.findOne({ _id: '6517112bf171e224f0bb79a4' });
@@ -32,13 +30,8 @@ async function khaltiPayment(req, res, next) {
                         msg: 'You are unauthorized'
                     });
                 }
-                console.log("process.env.JWT_SECRET",process.env.JWT_SECRET)
-                const token = jwt.sign(data,process.env.JWT_SECRET)
-                //  const Jsondata = JSON.stringify(token);
-                //  const encodedData = querystring.escape(Jsondata)
-                // console.log("data--->",data.website_url)
                    const payload = {
-                    "return_url": `http://localhost:7000/api/khalti/payment/success/`,
+                    "return_url": `https://localhost:7000/api/sales/payment/success/`,
                     "website_url": data.website_url,
                     "amount": khaltivalidation.totalAmount * 100,
                     "purchase_order_id": orderId,
@@ -54,11 +47,8 @@ async function khaltiPayment(req, res, next) {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Key ${authorizationKey}`,
-                        token:`${token}`
                     }
                 });
-        
-                console.log('initiateResponse',initiateResponse)
                 if (initiateResponse.data.pidx) {
                     return res.json(initiateResponse.data.payment_url);
                 } else {
@@ -98,11 +88,12 @@ async function verifyKhaltiPayment(req,res){
       }
     }
   );
-  if(verificationResponse.data.status==='completed'){
-
+  console.log('hello 92')
+  console.log(verificationResponse.data)
+  if(verificationResponse.data.status==='Completed'){
+  return res.json('hello success');
   }
 }
-  
    
 // to find all product 
 async function findAllSalesProduct(req,res,next){

@@ -1,12 +1,21 @@
 const { iteratee } = require('lodash');
 const cartModel = require('../../models/Cart/cartModel')
-
 const ProductSchema = require('../../models/product/productSchema');
-const { errorMonitor } = require('nodemailer/lib/xoauth2');
+
+// toadd in cart
+const {generateOrderID} = require('../../helper/generate_orderid');
+
+const orderId = await generateOrderID();
+
 const addToCart = async (req, res) => {
+    const data  = req.body;
+    if(!data){
+        return res.status(400).json({
+            msg:"Please choose a products"
+        })
+    }
+    let newArray =[];
   try {
-    console.log('first',req.body)
-      const data  = req.body;
     //   console.log('first')
       if (data.cart.length > 0) {
           for (const cart of data.cart) {
@@ -33,12 +42,18 @@ const addToCart = async (req, res) => {
               if (cart.modelNo !== product.modelNo) {
                   return res.status(200).json({ message: "Model number is not the same or is not in stock" });
               }
-
+              
+              newArray.push({...cart,productId:cart._id});
           }
-          console.log('datatatatata---->',data)
-          await cartModel.create(data); 
+        const savedCart =  await cartModel.create({...data,cart:newArray,orderId:orderId})
 
-          return res.status(200).json({ message: "All validated. You are ready to go..." });
+        if(savedCart){
+            return res.status(200).json({ message: "All validated. You are ready to go..." });
+        }
+        return res.status(400).json({
+            msg:'unable to save your data'
+        })
+
       } else {
           return res.status(400).json({ message: "No data provided" });
       }
@@ -66,7 +81,6 @@ const updateCart = async(req,res)=>{
             found.price = price;
 
             found.save();
-
         }
         return res.status(200).json({
             msg:"database updated successfully",

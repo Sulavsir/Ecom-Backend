@@ -1,4 +1,4 @@
-const KhaltiModel = require('../models/KhaltiProductSchema/khalti_product.schema')
+const CartModel = require('../models/Cart/cartModel');
 // get unique Order Id
 // number of length of order;
 const numberOfLength = '000';
@@ -8,10 +8,9 @@ const generateOrderID = async () => {
     let orderId = `${prefix}-001`;
   
     try {
-      const latestRecord = await KhaltiModel.findOne({}, 'orderId', {
+      const latestRecord = await CartModel.findOne({}, 'orderId', {
         sort: { createdDateTime: -1 }
       });
-  
       if (latestRecord && latestRecord.orderId) {
         const splittedId = latestRecord.orderId.split('-');
         if (splittedId.length > 1) {
@@ -29,7 +28,7 @@ const generateOrderID = async () => {
             );
             orderNumber = orderNumber.slice(-1 * sliceLength);
             orderId = `${prefix}-${orderNumber}`;
-            isExist = await KhaltiModel.findOne({
+            isExist = await CartModel.findOne({
               orderId
             });
           } while (isExist);

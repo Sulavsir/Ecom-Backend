@@ -40,9 +40,9 @@ module.exports = async function validateKhaltidata(data) {
                      } };
                 }
                 if(existingProduct){
-                    console.log('------->',existingProduct)
                     if( existingProduct.discount?.discountType==='value'){
                         const discountValue =parseInt(existingProduct.discount?.discountValue)*parseInt(product.quantity)
+                        console.log(discountValue);
                       totalamount=totalamount-discountValue
                       calculatedKhaltiData.push({
                         identity:product.productId,
@@ -54,6 +54,7 @@ module.exports = async function validateKhaltidata(data) {
                      }
                      if(existingProduct.discount?.discountType ==='percentage'){
                         const discountPercent = totalamount*parseInt(existingProduct.discount?.discountValue)/100
+                        console.log(discountPercent)
                         totalamount=totalamount- discountPercent
                         calculatedKhaltiData.push({
                             identity:product.productId,
@@ -66,7 +67,6 @@ module.exports = async function validateKhaltidata(data) {
                      
                 }
                 totalAmount += totalamount;
-                // console.log('total amount', totalamount);
             }
         }else{
 

@@ -7,7 +7,7 @@ cart:[ {
         ref:'product_details'
     },
     category:{
-        type:Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId, 
         ref:'categories',
     },
     subCategoryId: {
@@ -25,7 +25,7 @@ cart:[ {
     },
     orderId:{
         type:String,
-        // required:true,
+        required:true,
     },
     price:{
         type:Number,
