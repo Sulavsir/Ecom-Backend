@@ -3,6 +3,8 @@ const Client = require('../../models/customer/customerModel');
 const {generateOrderID} = require('../../helper/generate_orderid');
 const axios = require('axios');
 const KhaltiValidation= require('../../helper/validateKhaltidata');
+const cartModel = require('../../models/Cart/cartModel');
+const orderModel = require('../../models/order/orderModel')
 
 
 // for khalti 
@@ -12,7 +14,7 @@ const authorizationKey = process.env.KhaltiAuth_KEY;
 
 async function khaltiPayment(req, res, next) {
     const data = req.body;
-    const orderId = (await generateOrderID()).toString();
+ 
     const cacheTimeout =36000;
 
     try {
@@ -23,7 +25,7 @@ async function khaltiPayment(req, res, next) {
             if(!JSON.parse(error).error?.msg){
                 // Your validation was successful, continue with the payment initiation logic
               const khalti = khaltivalidation.calculatedKhaltiData
-                const client = await Client.findOne({ _id: '6517112bf171e224f0bb79a4' });
+                const client = await Client.findOne({ _id: '65c5c17bebc3720793e7aefa' });
         
                 if (!client) {
                     return res.status(404).json({
@@ -34,7 +36,7 @@ async function khaltiPayment(req, res, next) {
                     "return_url": `https://localhost:7000/api/sales/payment/success/`,
                     "website_url": data.website_url,
                     "amount": khaltivalidation.totalAmount * 100,
-                    "purchase_order_id": orderId,
+                    "purchase_order_id": data?.orderId,
                     "purchase_order_name": "test2",  
                     "product_details":khalti,
                     "customer_info": {
@@ -88,10 +90,29 @@ async function verifyKhaltiPayment(req,res){
       }
     }
   );
-  console.log('hello 92')
-  console.log(verificationResponse.data)
-  if(verificationResponse.data.status==='Completed'){
-  return res.json('hello success');
+  if(verificationResponse.data.status==='Completed')
+  {
+    for(const data of purchase_order_id)
+    {
+        const found = await cartModel.findOne({productId:data})
+        console.log(found)
+        if(!found)
+        {
+            return res.status(400).json({msg:"Data not found "})
+        };
+        const orderId = (await generateOrderID());
+        const createOrder = await orderModel.create({...found,orderId})
+        if(!createOrder)
+        {
+            return res.status(400).json({msg:"Error saving into database"});
+        }
+        const deleteCartData = await cartModel.findOneAndDelete({productId:data});
+        if(!deleteCartData)
+        {
+            return res.status(400).json({msg:"Data could not be deleted "})
+        }
+    }
+    return res.json('hello success');
   }
 }
    
