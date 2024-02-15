@@ -1,6 +1,4 @@
-const { update } = require('lodash')
 const khaltipayment = require('../../models/KhaltiProductSchema/khalti_product.schema')
-
 function map_khalti_payment(purchaseDetails,product){
     if(purchaseDetails.productDetails)
      product.productDetails = purchaseDetails.productDetails

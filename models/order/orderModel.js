@@ -1,21 +1,25 @@
 const mongoose = require('mongoose')
-
 const orderSchema = new mongoose.Schema({
     clientId:{
         type:mongoose.Types.ObjectId,
         ref:'Customer-model'
     },
+    orderId:{
+        type:String,
+        required:true,
+    },
+    transaction_id:{
+        type:String,
+        // required:true
+    },
+    total_amount:Number,
     status:{
         type:String,
-        enum:['Ordered', 'delivered','cancledBy-user'],
-        default:'Ordered'
+        enum:['pending', 'delivered', 'cencelByUser'],
+        default:'pending'
     },
-    orderId:{
-            type:String,
-            required:true
-    },
-    
-    productDetails:[{
+   productDetails:
+   [{
     productId:{
         type:mongoose.Types.ObjectId,
         ref:'product_details'
@@ -37,10 +41,7 @@ const orderSchema = new mongoose.Schema({
     quantity:{
         type:Number,
     },
-    orderId:{
-        type:String,
-        required:true,
-    },
+   
     price:{
         type:Number,
     },
@@ -53,13 +54,16 @@ const orderSchema = new mongoose.Schema({
     salesQuantity:{
         type:Number,
     },
+    
     size:[String],
     images:[String],
-    purchasedDate:Date,
-    salesDate:Date,
+    purchasedDate:{
+        type:Date,
+        default:Date.now
+    },
+    deliveredDate:Date,
     returnedDate:Date,
 
-    
     discount:{
         discountItem:Boolean,
         discountType:{
@@ -68,10 +72,11 @@ const orderSchema = new mongoose.Schema({
         },
         discountValue: String
    
-    }
-}],
-},
+    },
+    updatedAt:Date
+}] ,
 
+},
    {
        timestamps: true
    })

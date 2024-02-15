@@ -1,15 +1,16 @@
-const khaltipayment_query = require('./khalti_product_query');
 const Client = require('../../models/customer/customerModel');
 const {generateOrderID} = require('../../helper/generate_orderid');
 const axios = require('axios');
 const KhaltiValidation= require('../../helper/validateKhaltidata');
-const { identity, concat } = require('lodash');
+const CartModel = require('../../models/Cart/cartModel');
+const orderModel = require('../../models/order/orderModel')
 
 
 // for khalti 
 const initiateUrl = "https://a.khalti.com/api/v2/epayment/initiate/";
 const verificationUrl = 'https://a.khalti.com/api/v2/epayment/lookup/';
 const authorizationKey = process.env.KhaltiAuth_KEY;
+
 
 async function khaltiPayment(req, res, next) {
     const data = req.body;
@@ -24,18 +25,29 @@ async function khaltiPayment(req, res, next) {
             if(!JSON.parse(error).error?.msg){
                 // Your validation was successful, continue with the payment initiation logic
               const khalti = khaltivalidation.calculatedKhaltiData
-                const client = await Client.findOne({ _id: '6517112bf171e224f0bb79a4' });
-        
+              console.log("first---->",khaltivalidation.calculatedKhaltiData)
+              let singleString ='';
+              for (const productId of khaltivalidation.calculatedKhaltiData){
+                 console.log("identity ",productId.identity)
+                 singleString = singleString.concat(productId.identity,',');
+                
+              }
+              if (singleString.endsWith(',')) {
+                singleString = singleString.slice(0, -1);
+            }
+              console.log("singlrString",singleString)
+                const client = await Client.findOne({ _id:'6517112bf171e224f0bb79a4'});
                 if (!client) {
                     return res.status(404).json({
                         msg: 'You are unauthorized'
                     });
                 }
+                const clientId=client._id;
                    const payload = {
-                    "return_url": `https://localhost:7000/api/sales/payment/success`,
+                    "return_url": `https://localhost:7000/api/sales/payment/success/${singleString}/${clientId}`,
                     "website_url": data.website_url,
                     "amount": khaltivalidation.totalAmount * 100,
-                    "purchase_order_id": data?.orderId,
+                    "purchase_order_id":`${singleString}`,
                     "purchase_order_name": "test2",  
                     "product_details":khalti, 
                     "customer_info": {
@@ -44,10 +56,11 @@ async function khaltiPayment(req, res, next) {
                     }
                 };
                 console.log('payload',payload)
-                const initiateResponse = await axios.post(initiateUrl, payload, {
+                const initiateResponse = await axios.post(initiateUrl, payload,{
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Key ${authorizationKey}`,
+                        
                     }
                 });
                 if (initiateResponse.data.pidx) {
@@ -78,7 +91,11 @@ async function khaltiPayment(req, res, next) {
 
 // for khaltipayment verifications
 async function verifyKhaltiPayment(req,res){
-    const {pidx,amount,purchase_order_id,purchase_order_name,transaction_id}=req.query;
+    const orderId =  (await generateOrderID()).toString();
+    const {pidx}=req.query;
+    let PurchaseOrders=[];
+    const {data,clientId} = req.params;
+    const ProductId = data.split(',')
   const verificationResponse = await axios.post(
     verificationUrl,
     { pidx },
@@ -89,19 +106,35 @@ async function verifyKhaltiPayment(req,res){
       }
     }
   );
-  console.log('hello 92')
-  console.log(verificationResponse.data)
+ // extract transaction id and total amount form khalti response
+  const transactionId=verificationResponse.data.transaction_id;
+  const totalAmount=verificationResponse.data.total_amount/100;
   if(verificationResponse.data.status==='Completed'){
-  return res.json('hello success');
+    for(const productId  of ProductId ){
+        const CartData = await CartModel.findOne({productId:productId})
+        PurchaseOrders.push(CartData)
+        
+      }
   }
+  const newOrderData = await orderModel.create({productDetails:PurchaseOrders,orderId:orderId, clientId:clientId,
+    transaction_id:transactionId,
+    total_amount:totalAmount 
+   });
+  if(newOrderData){
+    return res.status(200).json({
+        msg:"Thank you for payment via khalti"
+    })
+  }
+  return res.status(400).json({
+    msg:"encountering error while payment via khalti"
+  })
 }
    
 // to find all product 
 async function findAllSalesProduct(req,res,next){
     let condition = {};
     try {
-     const existingSalesData = await khaltipayment_query.findAll(condition)  
-    
+     const existingSalesData = await orderModel.find(condition)  
      return res.status(200).json({
         data:existingSalesData
      })
@@ -109,6 +142,7 @@ async function findAllSalesProduct(req,res,next){
       next(error)  
     }
 }
+
 
 module.exports ={
 findAllSalesProduct,
