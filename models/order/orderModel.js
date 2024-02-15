@@ -5,6 +5,17 @@ const orderSchema = new mongoose.Schema({
         type:mongoose.Types.ObjectId,
         ref:'Customer-model'
     },
+    status:{
+        type:String,
+        enum:['Ordered', 'delivered','cancledBy-user'],
+        default:'Ordered'
+    },
+    orderId:{
+            type:String,
+            required:true
+    },
+    
+    productDetails:[{
     productId:{
         type:mongoose.Types.ObjectId,
         ref:'product_details'
@@ -42,11 +53,6 @@ const orderSchema = new mongoose.Schema({
     salesQuantity:{
         type:Number,
     },
-    status:{
-        type:String,
-        enum:['out of stock', 'available', 'booked', 'damaged'],
-        default:'available'
-    },
     size:[String],
     images:[String],
     purchasedDate:Date,
@@ -62,7 +68,8 @@ const orderSchema = new mongoose.Schema({
         },
         discountValue: String
    
-    },
+    }
+}],
 },
 
    {
