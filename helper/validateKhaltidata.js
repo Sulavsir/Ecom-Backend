@@ -46,7 +46,7 @@ module.exports = async function validateKhaltidata(data) {
                       totalamount=totalamount-discountValue
                       calculatedKhaltiData.push({
                         identity:product.productId,
-                        name:discountValue.toString(),
+                        name:existingProduct.modelNo,
                         total_price:totalamount,
                         quantity:product.quantity,
                         unit_price:existingProduct.price,
@@ -58,7 +58,7 @@ module.exports = async function validateKhaltidata(data) {
                         totalamount=totalamount- discountPercent
                         calculatedKhaltiData.push({
                             identity:product.productId,
-                            name:discountPercent.toString(),
+                            name:existingProduct.modelNo,
                             total_price:parseInt(totalamount),
                             quantity:product.quantity,
                             unit_price:existingProduct.price,

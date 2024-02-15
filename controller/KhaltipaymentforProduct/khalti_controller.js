@@ -3,11 +3,12 @@ const Client = require('../../models/customer/customerModel');
 const {generateOrderID} = require('../../helper/generate_orderid');
 const axios = require('axios');
 const KhaltiValidation= require('../../helper/validateKhaltidata');
+const { identity, concat } = require('lodash');
 
 
 // for khalti 
-const initiateUrl = "https://a.khalti.com/api/v2/epayment/initiate/"
-const verificationUrl = 'https://a.khalti.com/api/v2/epayment/lookup/'
+const initiateUrl = "https://a.khalti.com/api/v2/epayment/initiate/";
+const verificationUrl = 'https://a.khalti.com/api/v2/epayment/lookup/';
 const authorizationKey = process.env.KhaltiAuth_KEY;
 
 async function khaltiPayment(req, res, next) {
@@ -23,6 +24,14 @@ async function khaltiPayment(req, res, next) {
             if(!JSON.parse(error).error?.msg){
                 // Your validation was successful, continue with the payment initiation logic
               const khalti = khaltivalidation.calculatedKhaltiData
+              console.log("first---->",khaltivalidation.calculatedKhaltiData)
+              let singleString ='';
+              for (const productId of khaltivalidation.calculatedKhaltiData){
+                 console.log("identity ",productId.identity)
+                 singleString+=productId.identity +',';
+                
+              }
+              console.log("singlrString",singleString)
                 const client = await Client.findOne({ _id: '6517112bf171e224f0bb79a4' });
         
                 if (!client) {
@@ -31,12 +40,12 @@ async function khaltiPayment(req, res, next) {
                     });
                 }
                    const payload = {
-                    "return_url": `https://localhost:7000/api/sales/payment/success/`,
+                    "return_url": `https://localhost:7000/api/sales/payment/success`,
                     "website_url": data.website_url,
                     "amount": khaltivalidation.totalAmount * 100,
                     "purchase_order_id": orderId,
                     "purchase_order_name": "test2",  
-                    "product_details":khalti,
+                    "product_details":khalti, 
                     "customer_info": {
                         "name": client.name,
                         "email": client.email,
@@ -69,7 +78,7 @@ async function khaltiPayment(req, res, next) {
 
             return res.status(500).json({
                 msg: 'An unexpected error occurred.'
-            });
+            }); 
         }
 }
 
@@ -77,21 +86,21 @@ async function khaltiPayment(req, res, next) {
 
 // for khaltipayment verifications
 async function verifyKhaltiPayment(req,res){
-  const {pidx,amount,purchase_order_id,purchase_order_name,transaction_id}=req.query;
+    const {pidx,amount,purchase_order_id,purchase_order_name,transaction_id}=req.query;
   const verificationResponse = await axios.post(
     verificationUrl,
     { pidx },
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Key ${authorizationKey}`
+        Authorization: `Key ${authorizationKey}` 
       }
     }
   );
   console.log('hello 92')
-  console.log(verificationResponse.data)
   if(verificationResponse.data.status==='Completed'){
-  return res.json('hello success');
+     
+     return res.json('hello success');
   }
 }
    
