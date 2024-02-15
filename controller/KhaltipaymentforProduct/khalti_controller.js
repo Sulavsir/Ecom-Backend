@@ -99,8 +99,16 @@ async function verifyKhaltiPayment(req,res){
   );
   console.log('hello 92')
   if(verificationResponse.data.status==='Completed'){
+    const userId = req.user.id; 
+    const cart = await Cart.findOne({ clientId: userId });
+
+    if (!cart) {
+        return res.status(404).json({ message: 'Cart not found for the user' });
+    }
+
+    await Cart.deleteMany({ clientId: userId });
      
-     return res.json('hello success');
+    return res.json('hello success');
   }
 }
    
