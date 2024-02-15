@@ -8,8 +8,8 @@ const orderModel = require('../../models/order/orderModel')
 
 
 // for khalti 
-const initiateUrl = "https://a.khalti.com/api/v2/epayment/initiate/"
-const verificationUrl = 'https://a.khalti.com/api/v2/epayment/lookup/'
+const initiateUrl = "https://a.khalti.com/api/v2/epayment/initiate/";
+const verificationUrl = 'https://a.khalti.com/api/v2/epayment/lookup/';
 const authorizationKey = process.env.KhaltiAuth_KEY;
 
 async function khaltiPayment(req, res, next) {
@@ -25,7 +25,18 @@ async function khaltiPayment(req, res, next) {
             if(!JSON.parse(error).error?.msg){
                 // Your validation was successful, continue with the payment initiation logic
               const khalti = khaltivalidation.calculatedKhaltiData
-                const client = await Client.findOne({ _id: '65c5c17bebc3720793e7aefa' });
+              console.log("first---->",khaltivalidation.calculatedKhaltiData)
+              let singleString ='';
+              for (const productId of khaltivalidation.calculatedKhaltiData){
+                 console.log("identity ",productId.identity)
+                 singleString = singleString.concat(productId.identity,',');
+                
+              }
+              if (singleString.endsWith(',')) {
+                singleString = singleString.slice(0, -1);
+            }
+              console.log("singlrString",singleString)
+                const client = await Client.findOne({ _id: '6517112bf171e224f0bb79a4' });
         
                 if (!client) {
                     return res.status(404).json({
@@ -33,12 +44,12 @@ async function khaltiPayment(req, res, next) {
                     });
                 }
                    const payload = {
-                    "return_url": `https://localhost:7000/api/sales/payment/success/`,
+                    "return_url": `https://localhost:7000/api/sales/payment/success/${singleString}`,
                     "website_url": data.website_url,
                     "amount": khaltivalidation.totalAmount * 100,
                     "purchase_order_id": data?.orderId,
                     "purchase_order_name": "test2",  
-                    "product_details":khalti,
+                    "product_details":khalti, 
                     "customer_info": {
                         "name": client.name,
                         "email": client.email,
@@ -71,7 +82,7 @@ async function khaltiPayment(req, res, next) {
 
             return res.status(500).json({
                 msg: 'An unexpected error occurred.'
-            });
+            }); 
         }
 }
 
@@ -79,39 +90,29 @@ async function khaltiPayment(req, res, next) {
 
 // for khaltipayment verifications
 async function verifyKhaltiPayment(req,res){
-  const {pidx,amount,purchase_order_id,purchase_order_name,transaction_id}=req.query;
+    let PuchaseDetails=[];
+    const {pidx,amount,purchase_order_id,purchase_order_name,transaction_id}=req.query;
+    const data = req.params;
+    console.log("data--->",data)
+    const ProductId = data.data.split(',')
+    console.log("productId ",ProductId)
   const verificationResponse = await axios.post(
     verificationUrl,
     { pidx },
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Key ${authorizationKey}`
+        Authorization: `Key ${authorizationKey}` 
       }
     }
   );
-  if(verificationResponse.data.status==='Completed')
-  {
-    for(const data of purchase_order_id)
-    {
-        const found = await cartModel.findOne({productId:data})
-        console.log(found)
-        if(!found)
-        {
-            return res.status(400).json({msg:"Data not found "})
-        };
-        const orderId = (await generateOrderID());
-        const createOrder = await orderModel.create({...found,orderId})
-        if(!createOrder)
-        {
-            return res.status(400).json({msg:"Error saving into database"});
-        }
-        const deleteCartData = await cartModel.findOneAndDelete({productId:data});
-        if(!deleteCartData)
-        {
-            return res.status(400).json({msg:"Data could not be deleted "})
-        }
-    }
+ 
+  console.log('hello 92')
+  if(verificationResponse.data.status==='Completed'){
+    for(const productId  of ProductId ){
+        const CartData = await CartModel.findOne({productId:productId})
+        
+      }
     return res.json('hello success');
   }
 }

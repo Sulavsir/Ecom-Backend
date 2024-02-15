@@ -1,7 +1,10 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const cartSchema = new Schema({
-cart:[ { 
+    clientId:{
+        type:mongoose.Types.ObjectId,
+        ref:'Customer-model'
+    },
     productId:{
         type:mongoose.Types.ObjectId,
         ref:'product_details'
@@ -56,9 +59,9 @@ cart:[ {
         discountValue: String
    
     },
-}],
-totalPrice:Number,
-   },{
+},
+
+   {
        timestamps: true
    })
    
