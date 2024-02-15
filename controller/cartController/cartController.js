@@ -5,8 +5,6 @@ const ProductSchema = require('../../models/product/productSchema');
 // toadd in cart
 const {generateOrderID} = require('../../helper/generate_orderid');
 
-const orderId = await generateOrderID();
-
 const addToCart = async (req, res) => {
     const data  = req.body;
     console.log(req.user)
