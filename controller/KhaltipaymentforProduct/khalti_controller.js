@@ -1,4 +1,3 @@
-const khaltipayment_query = require('./khalti_product_query');
 const Client = require('../../models/customer/customerModel');
 const {generateOrderID} = require('../../helper/generate_orderid');
 const axios = require('axios');
@@ -135,8 +134,7 @@ async function verifyKhaltiPayment(req,res){
 async function findAllSalesProduct(req,res,next){
     let condition = {};
     try {
-     const existingSalesData = await khaltipayment_query.findAll(condition)  
-    
+     const existingSalesData = await orderModel.find(condition)  
      return res.status(200).json({
         data:existingSalesData
      })
@@ -144,6 +142,7 @@ async function findAllSalesProduct(req,res,next){
       next(error)  
     }
 }
+
 
 module.exports ={
 findAllSalesProduct,
