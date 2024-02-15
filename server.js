@@ -16,8 +16,6 @@ const KhaltiPaymentforProduct = require('./controller/KhaltipaymentforProduct/kh
 const cartRoutes = require('./routes/cartRoutes/cartRoutes');
 
 
-
-
 const cors = require("cors");
 const bodyParser = require('body-parser')
 // app.use(cors({
@@ -48,23 +46,6 @@ app.use('/api/categories',Categories)
 // for khalti payment and find sales product and other sales related routes
 app.use('/api/sales',KhaltiPaymentforProduct);
 app.use('/api/carts',cartRoutes);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

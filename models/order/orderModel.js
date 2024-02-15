@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-const cartSchema = new Schema({
+
+const orderSchema = new mongoose.Schema({
     clientId:{
         type:mongoose.Types.ObjectId,
         ref:'Customer-model'
@@ -10,11 +10,11 @@ const cartSchema = new Schema({
         ref:'product_details'
     },
     category:{
-        type:Schema.Types.ObjectId, 
+        type:mongoose.Types.ObjectId, 
         ref:'categories',
     },
     subCategoryId: {
-        type:Schema.Types.ObjectId,
+        type:mongoose.Types.ObjectId,
         ref:'categories',
     },
     brand:{
@@ -25,6 +25,10 @@ const cartSchema = new Schema({
     },
     quantity:{
         type:Number,
+    },
+    orderId:{
+        type:String,
+        required:true,
     },
     price:{
         type:Number,
@@ -65,5 +69,4 @@ const cartSchema = new Schema({
        timestamps: true
    })
    
-   module.exports = mongoose.model('cart_details',cartSchema);
-   
+   module.exports = mongoose.model('order_details',orderSchema);

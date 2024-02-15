@@ -13,7 +13,7 @@ const authorizationKey = process.env.KhaltiAuth_KEY;
 
 async function khaltiPayment(req, res, next) {
     const data = req.body;
-    const orderId = (await generateOrderID()).toString();
+ 
     const cacheTimeout =36000;
 
     try {
@@ -24,14 +24,6 @@ async function khaltiPayment(req, res, next) {
             if(!JSON.parse(error).error?.msg){
                 // Your validation was successful, continue with the payment initiation logic
               const khalti = khaltivalidation.calculatedKhaltiData
-              console.log("first---->",khaltivalidation.calculatedKhaltiData)
-              let singleString ='';
-              for (const productId of khaltivalidation.calculatedKhaltiData){
-                 console.log("identity ",productId.identity)
-                 singleString+=productId.identity +',';
-                
-              }
-              console.log("singlrString",singleString)
                 const client = await Client.findOne({ _id: '6517112bf171e224f0bb79a4' });
         
                 if (!client) {
@@ -43,7 +35,7 @@ async function khaltiPayment(req, res, next) {
                     "return_url": `https://localhost:7000/api/sales/payment/success`,
                     "website_url": data.website_url,
                     "amount": khaltivalidation.totalAmount * 100,
-                    "purchase_order_id": orderId,
+                    "purchase_order_id": data?.orderId,
                     "purchase_order_name": "test2",  
                     "product_details":khalti, 
                     "customer_info": {
@@ -98,17 +90,9 @@ async function verifyKhaltiPayment(req,res){
     }
   );
   console.log('hello 92')
+  console.log(verificationResponse.data)
   if(verificationResponse.data.status==='Completed'){
-    const userId = req.user.id; 
-    const cart = await Cart.findOne({ clientId: userId });
-
-    if (!cart) {
-        return res.status(404).json({ message: 'Cart not found for the user' });
-    }
-
-    await Cart.deleteMany({ clientId: userId });
-     
-    return res.json('hello success');
+  return res.json('hello success');
   }
 }
    

@@ -1,4 +1,4 @@
-const CartModel = require('../models/Cart/cartModel');
+const orderModel = require('../models/order/orderModel')
 // get unique Order Id
 // number of length of order;
 const numberOfLength = '000';
@@ -8,7 +8,7 @@ const generateOrderID = async () => {
     let orderId = `${prefix}-001`;
   
     try {
-      const latestRecord = await CartModel.findOne({}, 'orderId', {
+      const latestRecord = await orderModel.findOne({}, 'orderId', {
         sort: { createdDateTime: -1 }
       });
       if (latestRecord && latestRecord.orderId) {
@@ -28,7 +28,7 @@ const generateOrderID = async () => {
             );
             orderNumber = orderNumber.slice(-1 * sliceLength);
             orderId = `${prefix}-${orderNumber}`;
-            isExist = await CartModel.findOne({
+            isExist = await orderModel.findOne({
               orderId
             });
           } while (isExist);
