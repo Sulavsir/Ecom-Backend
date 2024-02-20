@@ -13,11 +13,7 @@ const orderSchema = new mongoose.Schema({
         // required:true
     },
     total_amount:Number,
-    status:{
-        type:String,
-        enum:['pending', 'delivered', 'cencelByUser'],
-        default:'pending'
-    },
+   
    productDetails:
    [{
     productId:{
@@ -50,6 +46,11 @@ const orderSchema = new mongoose.Schema({
     },
     color:{
         type:String,
+    },
+    status:{
+        type:String,
+        enum:['pending', 'orderApproved','delivered', 'cancelByUser'],
+        default:'pending'
     },
     salesQuantity:{
         type:Number,

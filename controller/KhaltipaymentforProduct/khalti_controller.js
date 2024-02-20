@@ -3,7 +3,7 @@ const {generateOrderID} = require('../../helper/generate_orderid');
 const axios = require('axios');
 const KhaltiValidation= require('../../helper/validateKhaltidata');
 const CartModel = require('../../models/Cart/cartModel');
-const orderModel = require('../../models/order/orderModel')
+const orderModel = require('../../models/order/orderModel');
 
 
 // for khalti 
@@ -113,17 +113,19 @@ async function verifyKhaltiPayment(req,res){
     for(const productId  of ProductId ){
         const CartData = await CartModel.findOne({productId:productId})
         PurchaseOrders.push(CartData)
-        
       }
+    
   }
   const newOrderData = await orderModel.create({productDetails:PurchaseOrders,orderId:orderId, clientId:clientId,
     transaction_id:transactionId,
     total_amount:totalAmount 
    });
+
   if(newOrderData){
     return res.status(200).json({
-        msg:"Thank you for payment via khalti"
-    })
+        msg:"Thank you for payment via khalti",
+        userOrderHistory:userOrderHistory
+    });
   }
   return res.status(400).json({
     msg:"encountering error while payment via khalti"
@@ -132,9 +134,10 @@ async function verifyKhaltiPayment(req,res){
    
 // to find all product 
 async function findAllSalesProduct(req,res,next){
+    const {status} = req.body;
     let condition = {};
     try {
-     const existingSalesData = await orderModel.find(condition)  
+     const existingSalesData = await orderModel.find({})  
      return res.status(200).json({
         data:existingSalesData
      })
@@ -143,9 +146,12 @@ async function findAllSalesProduct(req,res,next){
     }
 }
 
+// function for update 
+async function updateOrder(req,res){}
 
 module.exports ={
 findAllSalesProduct,
 khaltiPayment,
-verifyKhaltiPayment
+verifyKhaltiPayment,
+updateOrder
 }

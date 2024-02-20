@@ -8,7 +8,7 @@ function map_product_req(productData, product) {
     product.description = productData.description;
   if (productData.category)
     product.category = productData.category;
-if (productData.subCategoryId)
+  if (productData.subCategoryId)
     product.subCategoryId = productData.subCategoryId;
   if (productData.color)
     product.color = productData.color;
@@ -59,7 +59,7 @@ if (productData.subCategoryId)
  * @param {object} condition 
  * @returns Promise
  */
-function find(condition) {
+function find(condition){
 
   return productSchema
     .find(condition)
@@ -71,10 +71,9 @@ function find(condition) {
     .exec();
 }
 
-function insert(data) {
+function insert(data) 
+{
 
-  // validate data
-  // map data
   let newproduct = new productSchema({});
   map_product_req(data, newproduct)
   
@@ -172,6 +171,7 @@ async function addRatings(data, productId) {
    }
   }
 
+   
 
 module.exports = {
   find,
@@ -179,6 +179,7 @@ module.exports = {
   update,
   remove,
   addRatings,
-  removeAllItems
+  removeAllItems,
+  
 
 }

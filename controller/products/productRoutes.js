@@ -9,6 +9,8 @@ const adminAuthenticate  = require('../../helper/adminAuthenticate');
 router.route('/search')
   .get(ItemCtrl.search)
 
+router.get('/searchOne',ItemCtrl.searchOne)
+
 router.route('/')
   .get(
     authenticate, 

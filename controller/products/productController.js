@@ -18,7 +18,7 @@ function getAllItem(req, res, next) {
 
 }
 
-async function insert(req, res, next) {
+  async function insert(req, res, next) {
   const data = req.body;
   const categoryId= data.category
   const validId = isValid(categoryId)
@@ -115,7 +115,7 @@ function search(req, res, next) {
         $in: req.body.tags.split(','),
       };
     }
-  
+
     console.log('search condition >>', searchCondition);
   
     ItemQuery
@@ -127,7 +127,28 @@ function search(req, res, next) {
         next(err);
       });
   }
-  
+  async function searchOne(req,res){
+    try {
+      const searchItem =req.query.productId;
+      if(!searchItem)
+      {
+        return res.status(400).json({msg:"the one you are searching for is not available or invalid search term"});
+      }
+      let contition = {
+        _id:searchItem
+      }
+
+     const existingItem = await ItemQuery.find(contition)
+     if(existingItem){
+       return res.status(200).json({existingItem})
+     }
+    } catch (error) { 
+      console.log('error->',error)
+      return res.status(500).json({
+        msg:"Internal server error "
+      })
+    }
+  }
 
 function update(req, res, next) {
   const data = req.body;
@@ -204,9 +225,11 @@ function addRatings(req, res, next) {
         console.log(err)
     next(err)
     })
+    
 
 
 }
+
 module.exports = {
   getAllItem,
   getById,
@@ -215,5 +238,6 @@ module.exports = {
   update,
   remove,
   addRatings,
-  removeAllItems
+  removeAllItems,
+  searchOne
 }
