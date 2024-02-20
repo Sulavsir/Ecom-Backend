@@ -40,7 +40,7 @@ module.exports = function (req, res, next) {
                     req.user = user;
                     return next();
                 })
-                .catch((err) => {
+                .catch((erhr) => {
                     return next({
                         msg: "Unable to process"
                     });

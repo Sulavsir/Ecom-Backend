@@ -47,9 +47,9 @@ const orderSchema = new mongoose.Schema({
     color:{
         type:String,
     },
-    status:{
+   status:{
         type:String,
-        enum:['pending', 'orderApproved','delivered', 'cancelByUser'],
+        enum:['pending','cancelByUser','orderApproved','delivered' ],
         default:'pending'
     },
     salesQuantity:{

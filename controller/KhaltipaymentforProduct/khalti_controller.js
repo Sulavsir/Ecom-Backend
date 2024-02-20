@@ -124,7 +124,6 @@ async function verifyKhaltiPayment(req,res){
   if(newOrderData){
     return res.status(200).json({
         msg:"Thank you for payment via khalti",
-        userOrderHistory:userOrderHistory
     });
   }
   return res.status(400).json({
@@ -135,9 +134,31 @@ async function verifyKhaltiPayment(req,res){
 // to find all product 
 async function findAllSalesProduct(req,res,next){
     const {status} = req.body;
-    let condition = {};
+    const clientId = '6517112bf171e224f0bb79a4';
+    let arr = [];
     try {
-     const existingSalesData = await orderModel.find({})  
+     const existingSalesData = await orderModel.find({clientId:clientId})
+     console.log(existingSalesData)
+     for(const data of existingSalesData)
+     {
+       const pdDetails = data.productDetails.find(element => element.status === status)
+      //  console.log(data)
+       if(!pdDetails)
+       {
+        return res.status(400).json({
+          msg:"No data found "
+        })
+        
+       }
+       const orderDetails ={
+          clientId:clientId,
+          orderId:data.orderId,
+          pdDetails:pdDetails
+       };
+       arr.push(orderDetails);    
+       return res.status(200).json({ orderDetails : arr})
+     }
+
      return res.status(200).json({
         data:existingSalesData
      })
@@ -147,7 +168,39 @@ async function findAllSalesProduct(req,res,next){
 }
 
 // function for update 
-async function updateOrder(req,res){}
+async function updateOrder(req,res){
+  try {
+  const {orderId,_id,status} = req.body;
+  const foundOrder = await orderModel.findOne({orderId:orderId});
+  const prdcts = foundOrder.productDetails.find(element=>element._id.toString()===_id)
+
+  if(req.user.role ==='CLIENT')
+  {
+    if(prdcts.status==='pending')
+    {
+      prdcts.status = "cancelByUser"; 
+      await foundOrder.save();
+    }
+    else
+    {
+      return res.status(400).json({ msg: "You can only cancel pending orders." });
+    }    
+  }
+  
+  if(req.user.role ==='ADMIN')
+  {
+    if(prdcts.status==='pending')
+  {
+       prdcts.status="cancelByUser";
+
+  }
+  }
+  console.log(prdcts);
+  res.json(foundOrder);
+  } catch (error) {
+    return res.status(501).json({msg:"Internal Server Error"})
+  }
+}
 
 module.exports ={
 findAllSalesProduct,

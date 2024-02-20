@@ -137,18 +137,14 @@ const verification = async (req, res) => {
   };
 
 const customerLogin = async (req, res) => {
-  console.log("i am here")
     //   const errors = {};
       const { email, password } = req.body;
       if(!email) return res.status(400).json({message:"please enter email"});
       if(!password) return res.status(400).json({message:"please enter password"});
-      console.log(email,password);
-
       const filterData ={
         email:req.body.email,
         isDeleted:false
       };
-      // const isEmail = validator.isEmail(email);
       try {
       let ClientData = await customerModel.findOne(filterData);
       if (!ClientData) {

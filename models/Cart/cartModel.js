@@ -38,11 +38,6 @@ const cartSchema = new Schema({
     salesQuantity:{
         type:Number,
     },
-    status:{
-        type:String,
-        enum:['out of stock', 'available', 'booked', 'damaged'],
-        default:'available'
-    },
     size:[String],
     images:[String],
     purchasedDate:Date,
